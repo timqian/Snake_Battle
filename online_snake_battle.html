@@ -1,0 +1,72 @@
+<!DOCTYPE html >
+<html>
+<head>
+    <title>Snake game</title>
+    <style>
+		body {
+		  width: 400px;
+		  margin: auto;
+		}
+		#c {
+		  border: 2px solid #d3d3d3;
+		  margin-top: 10px;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="c" width="400" height="400"></canvas>
+	<p>用ASDW键控制，不要直接后退</p>
+
+	<script type="text/javascript" src='snakeAndFood.js'></script>
+	<script>
+	/*
+	变量：
+		w,h: playground的数据长宽; 
+		pw,ph: pixal width and height;
+		D: 按键对象
+		pb: 蛇数组(pixals of body)
+		pf: 食物位置			
+	*/
+
+
+/************************************************画家**************************************/
+	var c  = document.getElementById('c'), ctx = c.getContext('2d'), pw = c.width / w, ph = c.height / h; //w,s 在snakeAndFood.js中定义
+	ctx.mdo = function (f, a) { return ctx[f].apply(ctx, a), ctx; };
+	ctx.mset = function (f, v) { return ctx[f] = v, ctx; };
+	
+	Array.prototype.draw = function (type, color) {
+		if (type == 'snake') {
+			//head
+			ctx.mset('strokeStyle', '#fff').mdo('strokeRect', [this[0].x * pw, this[0].y * ph, pw, ph]).mset('fillStyle', color).mdo('fillRect', [this[0].x * pw, this[0].y * ph, pw, ph]); 
+			//body
+			for (var i = this.length - 1; i >= 1; i--) {
+				ctx.mset('strokeStyle', '#fff').mdo('strokeRect', [this[i].x * pw, this[i].y * ph, pw, ph]).mset('fillStyle', '#aaa').mdo('fillRect', [this[i].x * pw, this[i].y * ph, pw, ph]); 
+			};
+		} else {
+			for (var i = this.length - 1; i >= 0; i--) {
+				ctx.mset('strokeStyle', '#fff').mdo('strokeRect', [this[i].x * pw, this[i].y * ph, pw, ph]).mset('fillStyle', '#e96900').mdo('fillRect', [this[i].x * pw, this[i].y * ph, pw, ph]); 
+			};
+		}
+	}
+
+	function drawGover () {  //写game over
+		ctx.mset('fillStyle', '#e96900').mset('font', 'bold 24px 宋体').mdo('fillText', ['游戏结束', (c.width - 24 * 4) / 2, (c.height - 24) / 2]); 
+	}
+
+	function drawSnakeAndFood () {
+		ctx.mset('fillStyle', '#f1fedd').mdo('fillRect', [0, 0, c.width, c.height]); //画画布
+		food.draw('food');
+		snake1.body.draw('snake', 'green');
+		snake2.body.draw('snake', 'blue');
+	}
+/////////////////////////////////////////////////////////////////////////////
+
+	function gloop () {  //game loop
+		update();
+		drawSnakeAndFood();  //不知道为什么，把它放前面，捕捉事件的反应会慢
+		tid = setTimeout(gloop, 200);
+	}
+	var tid = setTimeout(gloop, 200);
+	</script>
+</body>
+</html>
